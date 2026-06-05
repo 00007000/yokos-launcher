@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Bb10Hub" parent="Theme.Material3.Dark">
+        <item name="colorPrimary">@color/bb10_primary</item>
+        <item name="colorSecondary">@color/bb10_secondary</item>
+        <item name="colorTertiary">@color/bb10_tertiary</item>
+        <item name="android:colorBackground">@color/bb10_background</item>
+        <item name="android:colorForeground">@color/bb10_text_primary</item>
+    </style>
+</resources>
