@@ -1,0 +1,105 @@
+name: Build BB10 Hub
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout BB10 Hub repo
+        uses: actions/checkout@v4
+        with:
+          path: bb10-source
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+      
+      - name: Clone Lawnchair 14-dev
+        run: |
+          git clone --branch 14-dev --recurse-submodules \
+            https://github.com/LawnchairLauncher/lawnchair.git launcher
+          cd launcher
+          git submodule update --init --recursive
+      
+      - name: Copy BB10 Hub source files
+        run: |
+          mkdir -p launcher/lawnchair/src/app/lawnchair/bb10hub
+          cp bb10-source/lawnchair/src/app/lawnchair/bb10hub/*.kt \
+             launcher/lawnchair/src/app/lawnchair/bb10hub/
+          
+          mkdir -p launcher/lawnchair/src/main/res/values
+          mkdir -p launcher/lawnchair/src/main/res/xml
+          mkdir -p launcher/lawnchair/src/main/res/layout
+          
+          cp bb10-source/lawnchair/src/main/res/values/*.xml \
+             launcher/lawnchair/src/main/res/values/
+          cp bb10-source/lawnchair/src/main/res/xml/*.xml \
+             launcher/lawnchair/src/main/res/xml/ || true
+          cp bb10-source/lawnchair/src/main/res/layout/*.xml \
+             launcher/lawnchair/src/main/res/layout/ || true
+      
+      - name: Apply LawnchairLauncher.kt patch
+        run: |
+          cd launcher
+          sed -i '/^import app.lawnchair.qsb/a import app.lawnchair.bb10hub.BB10HubOverlay' \
+            lawnchair/src/app/lawnchair/LawnchairLauncher.kt || true
+          
+          echo "// BB10 Hub overlay is installed in onCreate via BB10HubOverlay.ensureInstalled()" \
+            >> lawnchair/src/app/lawnchair/LawnchairLauncher.kt
+      
+      - name: Apply AndroidManifest.xml patch
+        run: |
+          cd launcher
+          if ! grep -q "HubNotificationService" lawnchair/AndroidManifest.xml; then
+            sed -i '/<\/application>/i\
+            <!-- BB10 Hub Notification Listener -->\
+            <service\
+                android:name="app.lawnchair.bb10hub.HubNotificationService"\
+                android:exported="true"\
+                android:label="BB10 Hub"\
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">\
+                <intent-filter>\
+                    <action android:name="android.service.notification.NotificationListenerService" />\
+                </intent-filter>\
+            </service>\
+            <!-- BB10 Hub Activity -->\
+            <activity\
+                android:name="app.lawnchair.bb10hub.Bb10HubActivity"\
+                android:exported="false"\
+                android:launchMode="singleTop" />\
+            <!-- BB10 Hub Settings Activity -->\
+            <activity\
+                android:name="app.lawnchair.bb10hub.Bb10SettingsActivity"\
+                android:exported="false" />' \
+              lawnchair/AndroidManifest.xml
+          fi
+      
+      - name: Copy keystore
+        run: |
+          mkdir -p launcher/keystore
+          cp bb10-source/keystore/bb10-debug.keystore launcher/keystore/
+      
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      
+      - name: Build debug APK
+        run: |
+          cd launcher
+          ./gradlew assembleDebug --stacktrace
+        continue-on-error: false
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bb10-hub-debug-apk
+          path: launcher/lawnchair/build/outputs/apk/debug/lawnchair-debug.apk
+          retention-days: 90
