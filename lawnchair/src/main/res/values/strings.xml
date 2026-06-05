@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lawnchair</string>
+    <string name="bb10_hub_name">BB10 Hub</string>
+    <string name="bb10_hub_label">BB10 Notification Hub</string>
+    
+    <!-- Notification categories -->
+    <string name="category_email">Email</string>
+    <string name="category_sms">Messages</string>
+    <string name="category_social">Social</string>
+    <string name="category_calls">Calls</string>
+    <string name="category_other">Other</string>
+    
+    <!-- Actions -->
+    <string name="action_snooze">Snooze</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_reply">Reply</string>
+    <string name="action_open">Open</string>
+    
+    <!-- Settings -->
+    <string name="settings_peek_enabled">Peek Animation</string>
+    <string name="settings_peek_description">Show notification peek when message arrives</string>
+    <string name="settings_led_enabled">LED Light</string>
+    <string name="settings_led_description">Flash Xperia LED per category</string>
+    <string name="settings_group">Group by Category</string>
+    <string name="settings_group_description">Sort notifications by type</string>
+    <string name="settings_diagnostics">Diagnostics Logging</string>
+    <string name="settings_diagnostics_description">Log app events for debugging</string>
+    
+    <!-- Messages -->
+    <string name="no_notifications">No notifications</string>
+    <string name="permission_required">Notification access required</string>
+</resources>
