@@ -105,9 +105,13 @@ jobs:
           ./gradlew assembleDebug --stacktrace
         continue-on-error: false
         
-      - name: Find APK files
+      - name: Find all build outputs
         run: |
-          find launcher/lawnchair/build/outputs/apk -name "*.apk" -type f
+          echo "=== Looking for APK files ==="
+          find launcher -name "*.apk" -type f 2>/dev/null || echo "No APKs found"
+          echo ""
+          echo "=== Listing apk output directory ==="
+          ls -la launcher/lawnchair/build/outputs/ 2>/dev/null || echo "No outputs directory"
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
