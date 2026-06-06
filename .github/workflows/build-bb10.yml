@@ -117,7 +117,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bb10-hub-debug-apk
-          path: *.apk
+          path: launcher/lawnchair/build/outputs/apk/lawnWithQuickstepGithubDebug/*.apk
           retention-days: 90
 
 
