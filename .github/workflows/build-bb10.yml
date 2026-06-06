@@ -104,7 +104,11 @@ jobs:
           cd launcher
           ./gradlew assembleDebug --stacktrace
         continue-on-error: false
-      
+        
+      - name: Find APK files
+        run: |
+          find launcher/lawnchair/build/outputs/apk -name "*.apk" -type f
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
