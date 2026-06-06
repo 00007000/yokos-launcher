@@ -119,3 +119,10 @@ jobs:
           name: bb10-hub-debug-apk
           path: launcher/lawnchair/build/outputs/apk/lawnWithQuickstepGithubDebug/lawnchair-lawnWithQuickstepGithub-debug.apk
           retention-days: 90
+
+
+      - name: Build debug APK
+        run: |
+          cd launcher
+          # BB10 Hub build - APK will be uploaded on success
+          ./gradlew assembleDebug --stacktrace
