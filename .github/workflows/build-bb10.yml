@@ -23,11 +23,12 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
       
-      - name: Clone AOSP Launcher 3
+      - name: Clone Lawnchair 12-dev
         run: |
-          git clone https://android.googlesource.com/platform/packages/apps/Launcher3 launcher
+          git clone --branch 12-dev --recurse-submodules \
+            https://github.com/LawnchairLauncher/lawnchair.git launcher
           cd launcher
-          git log --oneline | head -5
+          git submodule update --init --recursive
       
       - name: Copy BB10 Hub source files
         run: |
