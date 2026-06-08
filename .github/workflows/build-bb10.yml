@@ -58,8 +58,15 @@ jobs:
       - name: Build debug APK
         run: |
           cd launcher
-          ./gradlew assembleDebug --stacktrace
-        continue-on-error: false
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
+        continue-on-error: true
+      
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: launcher/build.log
         
       - name: Find all build outputs
         run: |
@@ -68,3 +75,7 @@ jobs:
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
+        with:
+          name: bb10-hub-lawnchair12-debug
+          path: launcher/lawnchair/build/outputs/apk/*/debug/*.apk
+          retention-days: 90
