@@ -58,7 +58,7 @@ jobs:
       - name: Build debug APK
         run: |
           cd launcher
-          ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
+          ./gradlew assembleLawnWithQuickstepDebug --stacktrace 2>&1 | tee build.log
         continue-on-error: true
       
       - name: Upload build log
@@ -67,15 +67,19 @@ jobs:
         with:
           name: build-log
           path: launcher/build.log
+          if-no-files-found: ignore
         
-      - name: Find all build outputs
+      - name: Find and collect APKs
         run: |
           echo "=== Looking for APK files ==="
-          find launcher -name "*.apk" -type f 2>/dev/null || echo "No APKs found"
+          mkdir -p artifacts
+          find launcher -name "*.apk" -type f -exec cp {} artifacts/ \; 2>/dev/null || true
+          ls -la artifacts/ || echo "No APKs found"
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: bb10-hub-lawnchair12-debug
-          path: launcher/lawnchair/build/outputs/apk/*/debug/*.apk
+          name: bb10-hub-debug
+          path: artifacts/*.apk
           retention-days: 90
+          if-no-files-found: warn
